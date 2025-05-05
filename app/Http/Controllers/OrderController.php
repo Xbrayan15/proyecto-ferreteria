@@ -82,71 +82,68 @@ class OrderController extends Controller
     }
 
     public function checkoutFromCart(Request $request)
-{
-    $user = auth()->user();  // Obtener el usuario autenticado
+    {
+        $user = $request->user(); // Obtener el usuario autenticado desde la solicitud
 
-    // Verificar si el carrito está vacío
-    $cart = $user->shoppingCart()->with('cartItems.product')->first();
+        // Verificar si el carrito está vacío
+        $cart = $user->shoppingCart()->with('cartItems.product')->first();
 
-    if (!$cart || $cart->cartItems->isEmpty()) {
-        return redirect()->back()->with('error', 'Tu carrito está vacío.');
-    }
-
-    $request->validate([
-        'address_id' => 'required|exists:addresses,id',
-        'payment_method_id' => 'nullable|exists:payment_methods,id',
-        'coupon_id' => 'nullable|exists:coupons,id',
-    ]);
-
-    DB::beginTransaction();
-
-    try {
-        $totalAmount = 0;
-
-        // Calcular el monto total del pedido
-        foreach ($cart->cartItems as $item) {
-            if ($item->product->stock < $item->quantity) {
-                throw new \Exception("No hay suficiente stock para '{$item->product->name}'.");
-            }
-
-            $totalAmount += $item->product->price * $item->quantity;
+        if (!$cart || $cart->cartItems->isEmpty()) {
+            return redirect()->back()->with('error', 'Tu carrito está vacío.');
         }
 
-        // Crear el pedido
-        $order = Order::create([
-            'user_id' => $user->id,
-            'address_id' => $request->address_id,
-            'coupon_id' => $request->coupon_id,
-            'payment_method_id' => $request->payment_method_id,
-            'total_amount' => $totalAmount,
-            'status' => 'pending',
+        $request->validate([
+            'address_id' => 'required|exists:addresses,id',
+            'payment_method_id' => 'nullable|exists:payment_methods,id',
+            'coupon_id' => 'nullable|exists:coupons,id',
         ]);
 
-        // Agregar los artículos al pedido
-        foreach ($cart->cartItems as $item) {
-            OrderItem::create([
-                'order_id' => $order->id,
-                'product_id' => $item->product_id,
-                'quantity' => $item->quantity,
-                'price' => $item->product->price,
+        DB::beginTransaction();
+
+        try {
+            $totalAmount = 0;
+
+            // Calcular el monto total del pedido
+            foreach ($cart->cartItems as $item) {
+                if ($item->product->stock < $item->quantity) {
+                    throw new \Exception("No hay suficiente stock para '{$item->product->name}'.");
+                }
+
+                $totalAmount += $item->product->price * $item->quantity;
+            }
+
+            // Crear el pedido
+            $order = Order::create([
+                'user_id' => $user->id,
+                'address_id' => $request->address_id,
+                'coupon_id' => $request->coupon_id,
+                'payment_method_id' => $request->payment_method_id,
+                'total_amount' => $totalAmount,
+                'status' => 'pending',
             ]);
 
-            // Reducir el stock del producto
-            $item->product->decrement('stock', $item->quantity);
+            // Agregar los artículos al pedido
+            foreach ($cart->cartItems as $item) {
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $item->product_id,
+                    'quantity' => $item->quantity,
+                    'price' => $item->product->price,
+                ]);
+
+                // Reducir el stock del producto
+                $item->product->decrement('stock', $item->quantity);
+            }
+
+            // Vaciar el carrito
+            $cart->cartItems()->delete();
+
+            DB::commit();
+
+            return redirect()->route('orders.show', $order)->with('success', 'Pedido realizado con éxito.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', $e->getMessage());
         }
-
-        // Vaciar el carrito
-        $cart->cartItems()->delete();
-
-        DB::commit();
-
-        return redirect()->route('orders.show', $order)->with('success', 'Pedido realizado con éxito.');
-    } catch (\Exception $e) {
-        DB::rollBack();
-        return redirect()->back()->with('error', $e->getMessage());
     }
 }
-
-    
-}
-$user = auth()->user();
