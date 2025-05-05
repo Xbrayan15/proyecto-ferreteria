@@ -15,7 +15,15 @@ use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ProductReviewController;
 use App\Http\Controllers\ProductTaxController;
 use App\Http\Controllers\StockMovementController;
-
+use App\Http\Controllers\ShoppingCartController;
+use App\Http\Controllers\CartItemController;
+use App\Http\Controllers\CouponController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderItemController;
+use App\Http\Controllers\OrderStatusHistoryController;
+use App\Http\Controllers\InvoiceItemController;
+use App\Http\Controllers\InvoiceTaxController;
+use App\Http\Controllers\InvoiceStatusHistoryController;
 
 use App\Models\Product;
 
@@ -36,6 +44,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
 
 
 
@@ -86,15 +95,7 @@ Route::middleware(['auth'])->group(function () {
 
 
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/stocks', [StockController::class, 'index'])->name('stocks.index');
-    Route::get('/stocks/create', [StockController::class, 'create'])->name('stocks.create');
-    Route::post('/stocks', [StockController::class, 'store'])->name('stocks.store');
-    Route::get('/stocks/{stock}', [StockController::class, 'show'])->name('stocks.show');
-    Route::get('/stocks/{stock}/edit', [StockController::class, 'edit'])->name('stocks.edit');
-    Route::put('/stocks/{stock}', [StockController::class, 'update'])->name('stocks.update');
-    Route::delete('/stocks/{stock}', [StockController::class, 'destroy'])->name('stocks.destroy');
-});
+
 
 
 
@@ -116,6 +117,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
     Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+
+    Route::post('/product-reviews', [ProductReviewController::class, 'store'])->name('product-reviews.store');
 });
 
 
@@ -149,7 +152,7 @@ Route::resource('payment_methods', PaymentMethodController::class);
 
 Route::post('/product-reviews', [ProductReviewController::class, 'store'])->name('product-reviews.store');
 
-
+Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
 
 
 Route::get('products/{product}', [ProductController::class, 'show'])->name('products.show');
@@ -162,6 +165,57 @@ Route::delete('/products/{product}/taxes/{tax}', [ProductTaxController::class, '
 
 Route::resource('stock-movements', StockMovementController::class);
 
+
+
+
+
+Route::resource('shopping-carts', ShoppingCartController::class);
+
+
+
+
+Route::resource('cart-items', CartItemController::class);
+
+
+
+
+Route::resource('coupons', CouponController::class);
+
+
+
+
+
+
+// Ruta personalizada para hacer checkout desde el carrito
+Route::middleware('auth')->group(function () {
+    Route::resource('orders', OrderController::class);
+    Route::post('/checkout', [OrderController::class, 'checkoutFromCart'])->name('orders.checkout');
+});
+
+
+
+
+Route::resource('order-items', OrderItemController::class);
+
+
+
+Route::resource('order-status-history', OrderStatusHistoryController::class);
+
+// routes/web.php
+
+
+
+Route::resource('invoice-items', InvoiceItemController::class);
+
+
+
+
+Route::resource('invoice-taxes', InvoiceTaxController::class);
+
+
+
+
+Route::resource('invoice-status-history', InvoiceStatusHistoryController::class);
 
 
 

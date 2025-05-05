@@ -13,14 +13,13 @@ return new class extends Migration
     {
         Schema::create('stock_movements', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('product_id')->constrained()->cascadeOnDelete(); // Relación con productos
             $table->integer('quantity'); // Cantidad de producto movida (positiva para entrada, negativa para salida)
-            $table->string('movement_type'); // Tipo de movimiento (Ej: "entrada", "salida")
-            $table->text('description')->nullable(); // Descripción del movimiento
+            $table->enum('movement_type', ['entrada', 'salida']); // Tipo de movimiento restringido a dos valores
+            $table->text('description')->nullable(); // Descripción del movimiento (opcional)
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      */
