@@ -46,30 +46,24 @@ class User extends Authenticatable
     }
 
     /**
-<<<<<<< HEAD
-     * Define a one-to-many relationship with the Address model.
-=======
      * Get the addresses for the user.
      *
      * This method defines the relationship where a user can have many addresses.
      * 
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
->>>>>>> upstream/master
      */
     public function addresses()
     {
         return $this->hasMany(Address::class);
     }
-
     /**
-<<<<<<< HEAD
      * Define a belongs-to relationship with the Role model.
      */
     public function role()
     {
         return $this->belongsTo(Role::class);
     }
-=======
+    /**
      * Get the shopping cart associated with the user.
      *
      * This method defines the relationship between the user and the shopping cart.
@@ -107,5 +101,4 @@ class User extends Authenticatable
      }
  
      
->>>>>>> upstream/master
 }
