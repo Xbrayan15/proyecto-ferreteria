@@ -18,6 +18,37 @@
         </div>
     </div>
 
+    {{-- Formulario para agregar el producto al carrito --}}
+    @auth
+    <div class="mt-4">
+        <h4>Agregar al carrito</h4>
+        <form action="{{ route('cart-items.store') }}" method="POST">
+            @csrf
+            <input type="hidden" name="product_id" value="{{ $product->id }}">
+
+            @php
+                $shoppingCart = auth()->user()->shoppingCart ?? null;
+            @endphp
+
+            @if($shoppingCart)
+                <input type="hidden" name="shopping_cart_id" value="{{ $shoppingCart->id }}">
+
+                <div class="mb-3">
+                    <label for="quantity" class="form-label">Cantidad</label>
+                    <input type="number" name="quantity" id="quantity" class="form-control" value="1" min="1" max="{{ $product->stock }}" required>
+                    @error('quantity') <div class="text-danger">{{ $message }}</div> @enderror
+                </div>
+
+                <button type="submit" class="btn btn-primary">Agregar al carrito</button>
+            @else
+                <p>Debes tener un carrito activo para agregar productos. <a href="{{ route('shopping-carts.create') }}">Crea uno aquí</a>.</p>
+            @endif
+        </form>
+    </div>
+    @else
+        <p class="mt-3"> <a href="{{ route('login') }}">Inicia sesión</a> para agregar productos al carrito.</p>
+    @endauth
+
     <a href="{{ route('products.index') }}" class="btn btn-secondary mt-3">Volver al listado</a>
 
     {{-- SECCIÓN DE RESEÑAS --}}
@@ -25,11 +56,11 @@
         <h3 class="mb-3">Reseñas</h3>
 
         {{-- Mostrar reseñas existentes --}}
-        @if($product->reviews->isEmpty())
+        @if($product->productReviews->isEmpty())
             <p>No hay reseñas aún.</p>
         @else
             <div class="list-group mb-4">
-                @foreach($product->reviews as $review)
+                @foreach($product->productReviews as $review)
                     <div class="list-group-item">
                         <div class="d-flex justify-content-between">
                             <strong>{{ $review->user->name }}</strong>
@@ -80,18 +111,19 @@
             <p class="mt-3"> <a href="{{ route('login') }}">Inicia sesión</a> para dejar una reseña.</p>
         @endauth
     </div>
-    
-    <h4>Impuestos Aplicados</h4>
 
-@if($product->taxes->isEmpty())
-    <p>No hay impuestos asignados a este producto.</p>
-@else
-    <ul>
-        @foreach($product->taxes as $tax)
-            <li>{{ $tax->name }} ({{ $tax->percentage }}%)</li>
-        @endforeach
-    </ul>
-@endif
+    <h4 class="mt-5">Impuestos Aplicados</h4>
+
+    {{-- Mostrar impuestos asignados --}}
+    @if($product->taxes->isEmpty())
+        <p>No hay impuestos asignados a este producto.</p>
+    @else
+        <ul>
+            @foreach($product->taxes as $tax)
+                <li>{{ $tax->name }} ({{ $tax->rate }}%)</li>
+            @endforeach
+        </ul>
+    @endif
 
 </div>
 @endsection

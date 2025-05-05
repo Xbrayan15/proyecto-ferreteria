@@ -42,7 +42,38 @@
             </select>
         </div>
 
-        <!-- Puedes hacer lo mismo para subcategoría, marca, stock y tasa (tax) -->
+        <div class="mb-3">
+            <label for="subcategory_id" class="form-label">Subcategoría</label>
+            <select name="subcategory_id" id="subcategory_id" class="form-control">
+                <option value="">Seleccionar Subcategoría</option>
+                @foreach ($subcategories as $subcategory)
+                    <option value="{{ $subcategory->id }}" {{ old('subcategory_id') == $subcategory->id ? 'selected' : '' }}>{{ $subcategory->nombre }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="brand_id" class="form-label">Marca</label>
+            <select name="brand_id" id="brand_id" class="form-control">
+                <option value="">Seleccionar Marca</option>
+                @foreach ($brands as $brand)
+                    <option value="{{ $brand->id }}" {{ old('brand_id') == $brand->id ? 'selected' : '' }}>{{ $brand->nombre }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="tax_id" class="form-label">Tasa</label>
+            <select name="tax_id" id="tax_id" class="form-control">
+                <option value="">Seleccionar Tasa</option>
+                @foreach ($taxes as $tax)
+                    <option value="{{ $tax->id }}" {{ old('tax_id') == $tax->id ? 'selected' : '' }}>{{ $tax->nombre }}</option>
+                @endforeach
+            </select>
+        </div>
 
         <button type="submit" class="btn btn-primary">Guardar</button>
-        <a href="{{ route('products.index') }}" class
+        <a href="{{ route('products.index') }}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+@endsection

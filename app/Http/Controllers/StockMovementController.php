@@ -6,7 +6,6 @@ use App\Http\Requests\StoreStockMovementRequest;
 use App\Http\Requests\UpdateStockMovementRequest;
 use App\Models\Product;
 use App\Models\StockMovement;
-use Illuminate\Http\Request;
 
 class StockMovementController extends Controller
 {
@@ -18,7 +17,7 @@ class StockMovementController extends Controller
 
     public function create()
     {
-        $products = Product::all();
+        $products = Product::all();  // No necesitas 'with' para 'stock' porque 'stock' está directamente en 'products'
         return view('stock_movements.create', compact('products'));
     }
 
@@ -26,9 +25,10 @@ class StockMovementController extends Controller
     {
         $data = $request->validated();
 
-        // Ajustar la cantidad según el tipo de movimiento
+        // Ajustar la cantidad según el tipo de movimiento (salida o entrada)
         $adjustedQuantity = $data['movement_type'] === 'salida' ? -abs($data['quantity']) : abs($data['quantity']);
 
+        // Crear el movimiento de stock
         $movement = StockMovement::create([
             'product_id' => $data['product_id'],
             'quantity' => $adjustedQuantity,
@@ -38,7 +38,7 @@ class StockMovementController extends Controller
 
         // Actualizar el stock del producto
         $product = $movement->product;
-        $product->stock += $adjustedQuantity;
+        $product->stock += $adjustedQuantity;  // Modificamos directamente el campo 'stock' del producto
         $product->save();
 
         return redirect()->route('stock-movements.index')->with('success', 'Movimiento registrado correctamente.');
@@ -60,13 +60,14 @@ class StockMovementController extends Controller
         $data = $request->validated();
 
         // Revertir el movimiento anterior
-        $oldQuantity = $stockMovement->quantity;
-        $stockMovement->product->stock -= $oldQuantity;
-        $stockMovement->product->save();
+        $product = $stockMovement->product;
+        $product->stock -= $stockMovement->quantity;  // Restar la cantidad previa al stock
+        $product->save();
 
         // Calcular nueva cantidad según el tipo
         $newQuantity = $data['movement_type'] === 'salida' ? -abs($data['quantity']) : abs($data['quantity']);
 
+        // Actualizar el movimiento de stock
         $stockMovement->update([
             'product_id' => $data['product_id'],
             'quantity' => $newQuantity,
@@ -74,10 +75,10 @@ class StockMovementController extends Controller
             'description' => $data['description'],
         ]);
 
-        // Aplicar el nuevo movimiento al producto
-        $product = Product::find($data['product_id']);
-        $product->stock += $newQuantity;
-        $product->save();
+        // Aplicar el nuevo movimiento al stock
+        $newProduct = Product::find($data['product_id']);
+        $newProduct->stock += $newQuantity;  // Modificar directamente el campo 'stock'
+        $newProduct->save();
 
         return redirect()->route('stock-movements.index')->with('success', 'Movimiento actualizado correctamente.');
     }
@@ -86,11 +87,13 @@ class StockMovementController extends Controller
     {
         // Revertir el efecto del movimiento en el stock
         $product = $stockMovement->product;
-        $product->stock -= $stockMovement->quantity;
+        $product->stock -= $stockMovement->quantity;  // Restar la cantidad del stock
         $product->save();
 
+        // Eliminar el movimiento
         $stockMovement->delete();
 
         return redirect()->route('stock-movements.index')->with('success', 'Movimiento eliminado correctamente.');
     }
 }
+

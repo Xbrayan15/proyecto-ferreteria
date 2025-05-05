@@ -12,7 +12,7 @@ class Product extends Model
     // Definir los campos que se pueden asignar masivamente
     protected $fillable = [
         'nombre', 'descripcion', 'sku', 'precio', 'stock',
-        'category_id', 'subcategory_id', 'brand_id', 'stock_id', 'tax_id'
+        'category_id', 'subcategory_id', 'brand_id', 'tax_id'
     ];
 
     // Relacionar con otras tablas (Modelos)
@@ -31,11 +31,6 @@ class Product extends Model
         return $this->belongsTo(Brand::class);
     }
 
-    public function stock()
-    {
-        return $this->belongsTo(Stock::class);
-    }
-
     public function tax()
     {
         return $this->belongsTo(Tax::class);
@@ -51,17 +46,18 @@ class Product extends Model
         return $this->hasMany(ProductPriceHistory::class);
     }
     
-    public function reviews()
-{
-    return $this->hasMany(ProductReview::class);
+
+    public function taxes()
+    {
+        return $this->belongsToMany(Tax::class);
+    }
+
+    public function productReviews()
+    {
+        return $this->hasMany(ProductReview::class);
+    }
+
+    // Relación con Category
+   
 }
 
-// app/Models/Product.php
-
-public function taxes()
-{
-    return $this->belongsToMany(Tax::class);
-}
-
-
-}

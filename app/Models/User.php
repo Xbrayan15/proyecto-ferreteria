@@ -2,14 +2,12 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
     /**
@@ -34,7 +32,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast to a different data type.
      *
      * @return array<string, string>
      */
@@ -45,9 +43,55 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    public function addresses()
-{
-    return $this->hasMany(Address::class);
-}
 
+    /**
+     * Get the addresses for the user.
+     *
+     * This method defines the relationship where a user can have many addresses.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function addresses()
+    {
+        return $this->hasMany(Address::class);
+    }
+
+    /**
+     * Get the shopping cart associated with the user.
+     *
+     * This method defines the relationship between the user and the shopping cart.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function shoppingCart()
+    {
+        return $this->hasOne(ShoppingCart::class);
+    }
+
+    /**
+     * Get the orders associated with the user.
+     *
+     * This method defines the relationship where a user can have many orders.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    /**
+     * Get the reviews written by the user.
+     *
+     * This method defines the relationship where a user can leave many reviews.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+   
+     public function productReviews()
+     {
+         return $this->hasMany(ProductReview::class);
+     }
+ 
+     
 }
