@@ -19,10 +19,13 @@ use App\Http\Controllers\StockMovementController;
 
 use App\Models\Product;
 
-
 Route::get('/', function () {
-    return view('welcome');
-});
+    if (auth()->check()) {
+        return view('dashboard');
+    } else {
+        return view('welcome');
+    }
+})->name('home');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

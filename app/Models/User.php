@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role_id',
     ];
 
     /**
@@ -45,9 +46,20 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    public function addresses()
-{
-    return $this->hasMany(Address::class);
-}
 
+    /**
+     * Define a one-to-many relationship with the Address model.
+     */
+    public function addresses()
+    {
+        return $this->hasMany(Address::class);
+    }
+
+    /**
+     * Define a belongs-to relationship with the Role model.
+     */
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
 }
