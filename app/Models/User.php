@@ -19,6 +19,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role_id',
     ];
 
     /**
@@ -55,7 +56,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(Address::class);
     }
-
+    /**
+     * Define a belongs-to relationship with the Role model.
+     */
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
     /**
      * Get the shopping cart associated with the user.
      *

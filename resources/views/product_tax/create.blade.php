@@ -1,32 +1,54 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1>Agregar Relación Producto - Impuesto</h1>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white text-center">
+                    <h1 class="h4 mb-0">Agregar Relación Producto - Impuesto</h1>
+                </div>
+                <div class="card-body p-4">
+                    <form action="{{ route('product-tax.store') }}" method="POST">
+                        @csrf
 
-    <form action="{{ route('product-tax.store') }}" method="POST">
-        @csrf
+                        <!-- Producto -->
+                        <div class="mb-4">
+                            <label for="product_id" class="form-label fw-bold">Producto</label>
+                            <select name="product_id" id="product_id" class="form-select" required>
+                                <option value="">Seleccione</option>
+                                @foreach($products as $product)
+                                    <option value="{{ $product->id }}">{{ $product->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('product_id')
+                                <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-        <div class="mb-3">
-            <label for="product_id" class="form-label">Producto</label>
-            <select name="product_id" class="form-control" required>
-                <option value="">Seleccione</option>
-                @foreach($products as $product)
-                    <option value="{{ $product->id }}">{{ $product->name }}</option>
-                @endforeach
-            </select>
+                        <!-- Impuesto -->
+                        <div class="mb-4">
+                            <label for="tax_id" class="form-label fw-bold">Impuesto</label>
+                            <select name="tax_id" id="tax_id" class="form-select" required>
+                                <option value="">Seleccione</option>
+                                @foreach($taxes as $tax)
+                                    <option value="{{ $tax->id }}">{{ $tax->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('tax_id')
+                                <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-success px-4">Guardar</button>
+                            <a href="{{ route('product-tax.index') }}" class="btn btn-secondary px-4">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-
-        <div class="mb-3">
-            <label for="tax_id" class="form-label">Impuesto</label>
-            <select name="tax_id" class="form-control" required>
-                <option value="">Seleccione</option>
-                @foreach($taxes as $tax)
-                    <option value="{{ $tax->id }}">{{ $tax->name }}</option>
-                @endforeach
-            </select>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Guardar</button>
-        <a href="{{ route('product-tax.index') }}" class="btn btn-secondary">Cancelar</a>
-    </form>
+    </div>
+</div>
 @endsection
