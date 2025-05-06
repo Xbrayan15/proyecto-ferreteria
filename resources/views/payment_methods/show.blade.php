@@ -8,17 +8,19 @@
                 <div class="card-header bg-primary text-white text-center">
                     <h1 class="h4 mb-0">Detalles del Método de Pago</h1>
                 </div>
-                <div class="card-body p-4">
-                    <p><strong>ID:</strong> {{ $paymentMethod->id }}</p>
-                    <p><strong>Nombre:</strong> {{ $paymentMethod->name }}</p>
-                    <p><strong>Creado en:</strong> {{ $paymentMethod->created_at }}</p>
-                    <p><strong>Actualizado en:</strong> {{ $paymentMethod->updated_at }}</p>
+                <div class="card-body">
+                    <ul class="list-group mb-4">
+                        <li class="list-group-item"><strong>ID:</strong> {{ $paymentMethod->id }}</li>
+                        <li class="list-group-item"><strong>Nombre:</strong> {{ $paymentMethod->name }}</li>
+                        <li class="list-group-item"><strong>Creado en:</strong> {{ $paymentMethod->created_at->format('d/m/Y H:i') }}</li>
+                        <li class="list-group-item"><strong>Actualizado en:</strong> {{ $paymentMethod->updated_at->format('d/m/Y H:i') }}</li>
+                    </ul>
 
-    <div class="card">
-        <div class="card-body">
-            <p><strong>ID:</strong> {{ $paymentMethod->id }}</p>
-            <p><strong>Nombre:</strong> {{ $paymentMethod->name }}</p>
-            <a href="{{ route('payment_methods.index') }}" class="btn btn-primary">Volver</a>
+                    <div class="d-flex justify-content-end">
+                        <a href="{{ route('payment_methods.index') }}" class="btn btn-secondary px-4">Volver al listado</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

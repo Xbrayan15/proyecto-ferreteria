@@ -12,19 +12,24 @@
                     <form action="{{ route('payment_methods.store') }}" method="POST">
                         @csrf
 
-    <form action="{{ route('payment_methods.store') }}" method="POST">
-        @csrf
+                        <!-- Nombre del Método de Pago -->
+                        <div class="mb-4">
+                            <label for="name" class="form-label fw-bold">Nombre del Método de Pago</label>
+                            <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required>
+                            @error('name')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-        <div class="form-group">
-            <label for="name">Nombre del Método de Pago</label>
-            <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required>
-            @error('name')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
+                        <!-- Botones -->
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-success px-4">Guardar</button>
+                            <a href="{{ route('payment_methods.index') }}" class="btn btn-secondary px-4">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-
-        <button type="submit" class="btn btn-primary mt-3">Guardar</button>
-        <a href="{{ route('payment_methods.index') }}" class="btn btn-secondary mt-3">Cancelar</a>
-    </form>
+    </div>
 </div>
 @endsection
