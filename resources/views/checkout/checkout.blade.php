@@ -15,21 +15,29 @@
             @csrf
 
             <div class="mb-3">
-                <label for="address_id" class="form-label">Dirección</label>
+                <label for="address_id" class="form-label">Dirección de Envío</label>
                 <select name="address_id" class="form-select" required>
+                    <option value="">Selecciona una dirección</option>
                     @foreach($addresses as $address)
                         <option value="{{ $address->id }}">{{ $address->direccion_completa }}</option>
                     @endforeach
                 </select>
+                @error('address_id')
+                    <div class="text-danger">{{ $message }}</div>
+                @enderror
             </div>
 
             <div class="mb-3">
                 <label for="payment_method_id" class="form-label">Método de Pago</label>
                 <select name="payment_method_id" class="form-select" required>
+                    <option value="">Selecciona un método de pago</option>
                     @foreach($paymentMethods as $method)
                         <option value="{{ $method->id }}">{{ $method->nombre }}</option>
                     @endforeach
                 </select>
+                @error('payment_method_id')
+                    <div class="text-danger">{{ $message }}</div>
+                @enderror
             </div>
 
             <h4>Resumen del Carrito</h4>

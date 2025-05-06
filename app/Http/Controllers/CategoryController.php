@@ -8,11 +8,10 @@ use Illuminate\Http\Request;
 class CategoryController extends Controller
 {
     public function index()
-    {
-        $categories = Category::all();
-        return view('categories.index', compact('categories'));
-    }
-
+{
+    $categories = Category::paginate(10); // Ajusta el número según la cantidad deseada por página.
+    return view('categories.index', compact('categories'));
+}
     public function create()
     {
         return view('categories.create');
