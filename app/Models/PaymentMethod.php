@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PaymentMethod extends Model
 {
+    protected $table = 'payment_methods'; // Nombre de la tabla en la base de datos
     use HasFactory;
 
     protected $fillable = [

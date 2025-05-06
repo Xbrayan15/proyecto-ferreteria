@@ -22,6 +22,8 @@ class AddressController extends Controller
 
     public function store(Request $request)
     {
+        \Log::info('Store method called with data: ', $request->all());
+
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'nombre' => 'nullable|string|max:100',
@@ -33,7 +35,9 @@ class AddressController extends Controller
             'pais' => 'required|string|max:100',
         ]);
 
-        Address::create($request->all());
+        $address = Address::create($request->all());
+
+        \Log::info('Address created successfully: ', $address->toArray());
 
         return redirect()->route('addresses.index')->with('success', 'Dirección creada correctamente.');
     }

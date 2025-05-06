@@ -7,7 +7,6 @@
     @if(session('error'))
         <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
-
     @if($cart->cartItems->isEmpty())
         <p>No hay productos en tu carrito.</p>
     @else
@@ -16,10 +15,10 @@
 
             <div class="mb-3">
                 <label for="address_id" class="form-label">Dirección de Envío</label>
-                <select name="address_id" class="form-select" required>
-                    <option value="">Selecciona una dirección</option>
+                <select name="address_id" class="form-select" required autocomplete="off">
+                    <option value="" selected>Selecciona una dirección</option>
                     @foreach($addresses as $address)
-                        <option value="{{ $address->id }}">{{ $address->direccion_completa }}</option>
+                        <option value="{{ $address->id }}">    {{ $address->barrio }}, {{ $address->calle }}, {{ $address->ciudad }}</option>
                     @endforeach
                 </select>
                 @error('address_id')
@@ -29,10 +28,10 @@
 
             <div class="mb-3">
                 <label for="payment_method_id" class="form-label">Método de Pago</label>
-                <select name="payment_method_id" class="form-select" required>
-                    <option value="">Selecciona un método de pago</option>
+                <select name="payment_method_id" class="form-select" required autocomplete="off">
+                    <option value="" selected>Selecciona un método de pago</option>
                     @foreach($paymentMethods as $method)
-                        <option value="{{ $method->id }}">{{ $method->nombre }}</option>
+                        <option value="{{ $method->id }}">{{ $method->name }}</option>
                     @endforeach
                 </select>
                 @error('payment_method_id')

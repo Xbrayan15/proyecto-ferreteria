@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Address extends Model
 {
+    protected $table = 'addresses'; // Nombre de la tabla en la base de datos
     use HasFactory;
 
     protected $fillable = [
