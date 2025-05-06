@@ -9,8 +9,8 @@ class TaxController extends Controller
 {
     public function index()
     {
-        $taxes = Tax::all();
-        return view('taxes.index', compact('taxes'));
+        $taxes = Tax::paginate(10);
+        return view('taxes.index', compact('taxes'));;
     }
 
     public function create()

@@ -75,25 +75,54 @@ class CartItemController extends Controller
 
     // Mostrar formulario de checkout
     public function showCheckoutForm(Request $request)
-    {
-        $user = $request->user();
-        $cart = $user->shoppingCart()->with('cartItems.product')->first();
-
-        if (!$cart || $cart->cartItems->isEmpty()) {
-            return redirect()->route('cart-items.index')->with('error', 'Tu carrito está vacío.');
-        }
-
-        // Verifica que existan direcciones asociadas al usuario
-        $addresses = Address::where('user_id', $user->id)->get();
-        $paymentMethods = PaymentMethod::all();
-
-        // Inspecciona si las variables tienen datos
-        if ($addresses->isEmpty() || $paymentMethods->isEmpty()) {
-            return redirect()->route('cart-items.index')->with('error', 'No hay direcciones ni métodos de pago disponibles.');
-        }
-
-        return view('checkout.checkout', compact('cart', 'addresses', 'paymentMethods'));
+{
+    // Validate user is authenticated
+    if (!$request->user()) {
+        return redirect()->route('login')->with('error', 'Debes iniciar sesión para continuar.');
     }
+
+    $user = $request->user();
+
+    // Fetch user's shopping cart with related items and products
+    $cart = $user->shoppingCart()->with('cartItems.product')->first();
+
+    // Check if cart exists and has items
+    if (!$cart || $cart->cartItems->isEmpty()) {
+        return redirect()->route('cart-items.index')
+            ->with('error', 'Tu carrito está vacío.');
+    }
+
+    // Fetch user-specific addresses
+    $addresses = Address::where('user_id', $user->id)->get();
+
+    // Fetch all payment methods
+    $paymentMethods = PaymentMethod::all();
+
+    // Additional validation for addresses and payment methods
+    if ($addresses->isEmpty()) {
+        return redirect()->route('addresses.create')
+            ->with('error', 'Debes agregar una dirección de envío primero.');
+    }
+
+    if ($paymentMethods->isEmpty()) {
+        return redirect()->route('payment-methods.create')
+            ->with('error', 'No hay métodos de pago disponibles.');
+    }
+
+    // Calculate cart total
+    $cartTotal = $cart->cartItems->sum(function ($item) {
+        return $item->quantity * $item->product->price;
+    });
+
+    // Render checkout view with all necessary data
+    return view('checkout.checkout', [
+        'cart' => $cart,
+        'addresses' => $addresses,
+        'paymentMethods' => $paymentMethods,
+        'cartTotal' => $cartTotal
+    ]);
+}
+
 
     public function checkout(Request $request)
     {
