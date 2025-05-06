@@ -7,9 +7,10 @@ use App\Models\Product;
 use App\Models\ShoppingCart;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Models\User;
+
 
 
 
@@ -93,66 +94,67 @@ class CartItemController extends Controller
     }
 
     // Procesar checkout (POST)
-    public function checkout(Request $request)
-    {
-        $user = $request->user();
-        $cart = $user->shoppingCart()->with('cartItems.product')->first();
-        $cartItems = $cart?->cartItems ?? collect();
+public function checkout(Request $request)
+{
+    $user = $request->user();
+    $cart = $user->shoppingCart()->with('cartItems.product')->first();
+    $cartItems = $cart?->cartItems ?? collect();
 
-        if ($cartItems->isEmpty()) {
-            return redirect()->route('cart-items.index')->with('error', 'Tu carrito está vacío.');
+    if ($cartItems->isEmpty()) {
+        return redirect()->route('cart-items.index')->with('error', 'Tu carrito está vacío.');
+    }
+
+    $request->validate([
+        'address_id' => 'required|exists:addresses,id',
+        'payment_method_id' => 'required|exists:payment_methods,id',
+    ], [
+        'address_id.exists' => 'La dirección seleccionada no es válida.',
+        'payment_method_id.exists' => 'El método de pago seleccionado no es válido.',
+    ]);
+
+    DB::beginTransaction();
+
+    try {
+        $totalAmount = 0;
+
+        foreach ($cartItems as $item) {
+            if ($item->product->stock < $item->quantity) {
+                return redirect()->route('cart-items.index')
+                    ->with('error', "No hay suficiente stock para '{$item->product->name}'.");
+            }
+
+            $totalAmount += $item->product->price * $item->quantity;
         }
 
-        $request->validate([
-            'address_id' => 'required|exists:addresses,id',
-            'payment_method_id' => 'required|exists:payment_methods,id',
-        ], [
-            'address_id.exists' => 'La dirección seleccionada no es válida.',
-            'payment_method_id.exists' => 'El método de pago seleccionado no es válido.',
+        $order = Order::create([
+            'user_id' => $user->id,
+            'address_id' => $request->address_id,
+            'payment_method_id' => $request->payment_method_id,
+            'total_amount' => $totalAmount,
+            'status' => 'pending',
         ]);
 
-        DB::beginTransaction();
-
-        try {
-            $totalAmount = 0;
-
-            foreach ($cartItems as $item) {
-                if ($item->product->stock < $item->quantity) {
-                    return redirect()->route('cart-items.index')
-                                     ->with('error', "No hay suficiente stock para '{$item->product->name}'.");
-                }
-
-                $totalAmount += $item->product->price * $item->quantity;
-            }
-
-            $order = Order::create([
-                'user_id' => $user->id,
-                'address_id' => $request->address_id,
-                'payment_method_id' => $request->payment_method_id,
-                'total_amount' => $totalAmount,
-                'status' => 'pending',
+        foreach ($cartItems as $item) {
+            OrderItem::create([
+                'order_id' => $order->id,
+                'product_id' => $item->product_id,
+                'quantity' => $item->quantity,
+                'price' => $item->product->price,
             ]);
 
-            foreach ($cartItems as $item) {
-                OrderItem::create([
-                    'order_id' => $order->id,
-                    'product_id' => $item->product_id,
-                    'quantity' => $item->quantity,
-                    'price' => $item->product->price,
-                ]);
-
-                $item->product->decrement('stock', $item->quantity);
-            }
-
-            $cart->cartItems()->delete();
-
-            DB::commit();
-
-            return redirect()->route('orders.show', $order)->with('success',
-                'Pedido realizado con éxito. Número de orden: ' . $order->id . ' y total: $' . number_format($totalAmount, 2));
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->route('cart-items.index')->with('error', 'Hubo un problema al procesar tu pedido. Intenta nuevamente.');
+            $item->product->decrement('stock', $item->quantity);
         }
+
+        $cart->cartItems()->delete();
+
+        DB::commit();
+
+        return redirect()->route('orders.show', $order)->with('success',
+            'Pedido realizado con éxito. Número de orden: ' . $order->id . ' y total: $' . number_format($totalAmount, 2));
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return redirect()->route('cart-items.index')->with('error', 'Hubo un problema al procesar tu pedido. Intenta nuevamente.');
     }
+}
+
 }

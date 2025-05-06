@@ -12,10 +12,10 @@ class ShoppingCartController extends Controller
      * Mostrar todos los carritos de compra.
      */
     public function index()
-    {
-        $carts = ShoppingCart::with('user')->get();
-        return view('shopping_carts.index', compact('carts'));
-    }
+{
+    $carts = ShoppingCart::with('user')->paginate(10); // Cambia get() por paginate()
+    return view('shopping_carts.index', compact('carts'));
+}
 
     /**
      * Mostrar el formulario para crear un nuevo carrito.
