@@ -14,7 +14,11 @@ return new class extends Migration
         Schema::create('payment_methods', function (Blueprint $table) {
             $table->id(); // Identificador único del método de pago
             $table->string('name'); // Nombre del método de pago (Ej: tarjeta, PayPal)
+            $table->unsignedBigInteger('user_id'); // Relación con el usuario
             $table->timestamps(); // Tiempos de creación y actualización
+
+            // Relación con la tabla de usuarios
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -23,6 +27,11 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('payment_methods', function (Blueprint $table) {
+            $table->dropForeign(['user_id']); // Eliminar la clave foránea
+        });
+
         Schema::dropIfExists('payment_methods');
     }
 };
+

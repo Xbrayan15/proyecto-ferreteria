@@ -2,39 +2,14 @@
 
 @section('content')
 <div class="container">
-    <h1>Métodos de Pago</h1>
+    <h1>Detalles del Método de Pago</h1>
 
-    <a href="{{ route('payment_methods.create') }}" class="btn btn-primary mb-3">Crear nuevo método</a>
-
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
-
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($methods as $method)
-                <tr>
-                    <td>{{ $method->id }}</td>
-                    <td>{{ $method->name }}</td>
-                    <td>
-                        <a href="{{ route('payment_methods.show', $method) }}" class="btn btn-info btn-sm">Ver</a>
-                        <a href="{{ route('payment_methods.edit', $method) }}" class="btn btn-warning btn-sm">Editar</a>
-                        <form action="{{ route('payment_methods.destroy', $method) }}" method="POST" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" onclick="return confirm('¿Estás seguro?')" class="btn btn-danger btn-sm">Eliminar</button>
-                        </form>
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+    <div class="card">
+        <div class="card-body">
+            <p><strong>ID:</strong> {{ $paymentMethod->id }}</p>
+            <p><strong>Nombre:</strong> {{ $paymentMethod->name }}</p>
+            <a href="{{ route('payment_methods.index') }}" class="btn btn-primary">Volver</a>
+        </div>
+    </div>
 </div>
 @endsection

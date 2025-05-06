@@ -25,7 +25,25 @@ use App\Http\Controllers\InvoiceItemController;
 use App\Http\Controllers\InvoiceTaxController;
 use App\Http\Controllers\InvoiceStatusHistoryController;
 
-use App\Models\Product;
+
+
+
+Route::middleware('auth')->group(function () {
+    Route::resource('cart-items', CartItemController::class)->except(['show']);
+});
+
+Route::middleware('auth')->group(function () {
+    // Otras rutas...
+
+    // Mostrar formulario de checkout
+    Route::get('/cart-items/checkout', [CartItemController::class, 'showCheckoutForm'])->name('cart-items.checkout.form');
+
+    // Procesar checkout
+    Route::post('/cart-items/checkout', [CartItemController::class, 'checkout'])->name('cart-items.checkout');
+});
+
+
+
 
 
 Route::get('/', function () {
@@ -171,7 +189,21 @@ Route::resource('shopping-carts', ShoppingCartController::class);
 
 
 
-Route::resource('cart-items', CartItemController::class);
+
+
+Route::middleware('auth')->group(function () {
+    // Rutas CRUD para cart-items (sin show si no la necesitas)
+    Route::get('cart-items/{cart_item}', [CartItemController::class, 'show'])->name('cart-items.show');
+
+
+    // Ruta GET para mostrar el formulario de checkout
+    Route::get('/cart-items/checkout', [CartItemController::class, 'showCheckoutForm'])->name('cart-items.checkout.form');
+
+    // Ruta POST para procesar el checkout
+    Route::post('/cart-items/checkout', [CartItemController::class, 'checkout'])->name('cart-items.checkout');
+});
+
+
 
 
 

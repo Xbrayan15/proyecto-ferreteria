@@ -9,13 +9,19 @@ class PaymentMethod extends Model
 {
     use HasFactory;
 
+    // Asegúrate de que solo estos campos sean asignables masivamente
     protected $fillable = [
-        'name',
+        'name', // Nombre del método de pago
+        'user_id', // ID del usuario
     ];
 
-    // Si tiene relación con pedidos (orders)
-    public function orders()
+    /**
+     * Relación: Un método de pago pertenece a un usuario.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
     {
-        return $this->hasMany(Order::class);
+        return $this->belongsTo(User::class); // Cada método de pago pertenece a un usuario
     }
 }

@@ -31,9 +31,10 @@ class PaymentMethodController extends Controller
     }
 
     public function show(PaymentMethod $paymentMethod)
-    {
-        return view('payment_methods.show', compact('paymentMethod'));
-    }
+{
+    return view('payment_methods.show', compact('paymentMethod'));
+}
+
 
     public function edit(PaymentMethod $paymentMethod)
     {
