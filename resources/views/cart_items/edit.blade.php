@@ -1,42 +1,66 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h1>Editar Ítem del Carrito</h1>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white text-center">
+                    <h1 class="h4 mb-0">Editar Ítem del Carrito</h1>
+                </div>
+                <div class="card-body p-4">
+                    <form action="{{ route('cart-items.update', $cartItem) }}" method="POST">
+                        @csrf
+                        @method('PUT')
 
-    <form action="{{ route('cart-items.update', $cartItem) }}" method="POST">
-        @csrf
-        @method('PUT')
+                        <!-- Carrito -->
+                        <div class="mb-4">
+                            <label for="shopping_cart_id" class="form-label fw-bold">Carrito</label>
+                            <select name="shopping_cart_id" id="shopping_cart_id" class="form-select" required>
+                                @foreach($carts as $cart)
+                                    <option value="{{ $cart->id }}" {{ $cart->id == $cartItem->shopping_cart_id ? 'selected' : '' }}>
+                                        Usuario: {{ $cart->user->name ?? 'N/A' }} (ID: {{ $cart->id }})
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('shopping_cart_id')
+                                <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-        <div class="mb-3">
-            <label for="shopping_cart_id" class="form-label">Carrito</label>
-            <select name="shopping_cart_id" class="form-select" required>
-                @foreach($carts as $cart)
-                    <option value="{{ $cart->id }}" {{ $cart->id == $cartItem->shopping_cart_id ? 'selected' : '' }}>
-                        Usuario: {{ $cart->user->name ?? 'N/A' }} (ID: {{ $cart->id }})
-                    </option>
-                @endforeach
-            </select>
+                        <!-- Producto -->
+                        <div class="mb-4">
+                            <label for="product_id" class="form-label fw-bold">Producto</label>
+                            <select name="product_id" id="product_id" class="form-select" required>
+                                @foreach($products as $product)
+                                    <option value="{{ $product->id }}" {{ $product->id == $cartItem->product_id ? 'selected' : '' }}>
+                                        {{ $product->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('product_id')
+                                <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Cantidad -->
+                        <div class="mb-4">
+                            <label for="quantity" class="form-label fw-bold">Cantidad</label>
+                            <input type="number" name="quantity" id="quantity" class="form-control" value="{{ $cartItem->quantity }}" min="1" required>
+                            @error('quantity')
+                                <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-success px-4">Actualizar</button>
+                            <a href="{{ route('cart-items.index') }}" class="btn btn-secondary px-4">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-
-        <div class="mb-3">
-            <label for="product_id" class="form-label">Producto</label>
-            <select name="product_id" class="form-select" required>
-                @foreach($products as $product)
-                    <option value="{{ $product->id }}" {{ $product->id == $cartItem->product_id ? 'selected' : '' }}>
-                        {{ $product->nombre }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-
-        <div class="mb-3">
-            <label for="quantity" class="form-label">Cantidad</label>
-            <input type="number" name="quantity" class="form-control" value="{{ $cartItem->quantity }}" required>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Actualizar</button>
-        <a href="{{ route('cart-items.index') }}" class="btn btn-secondary">Cancelar</a>
-    </form>
+    </div>
 </div>
 @endsection

@@ -114,7 +114,11 @@
                             <div class="mb-3">
                                 <label for="review" class="form-label">Comentario</label>
                                 <textarea name="review" id="review" class="form-control" rows="3"></textarea>
-                                @error('review') <div class="text-danger">{{ $message }}</div> @enderror
+                                @error('review') 
+                                @if(isset($message)) 
+                                    <div class="text-danger">{{ $message }}</div> 
+                                @endif 
+                                @enderror
                             </div>
 
                             <button type="submit" class="btn btn-primary w-100">Enviar reseña</button>

@@ -1,130 +1,125 @@
 @extends('layouts.app')
 
-@section('title', ' inicio | Tool City')
+@section('title', 'Inicio | Tool City')
 
 @section('content')
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white text-center">
+                    <h1 class="h4 mb-0">Bienvenido a Tool City</h1>
+                </div>
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <h5>La mejor tienda de herramientas en línea</h5>
+                    </div>
 
+                    <!-- Navigation Links -->
+                    <div class="d-flex justify-content-center gap-3 mb-4">
+                        <button class="btn btn-outline-primary" @click="setSection('conocenos')">Conócenos</button>
+                        <button class="btn btn-outline-primary" @click="setSection('login')">Iniciar Sesión</button>
+                        <button class="btn btn-outline-primary" @click="setSection('register')">Registrar</button>
+                    </div>
 
+                    <!-- Sections -->
+                    <template x-if="section === 'conocenos'">
+                        <div class="section conocenos text-center">
+                            <h2>Conócenos</h2>
+                            <p>Bienvenido a Tool City, la mejor tienda de herramientas en línea.</p>
+                        </div>
+                    </template>
 
-    <div class="welcome" x-data="welcome">
-        <header>
-            <div class="link Conocenos" @click="setSection('conocenos')">Conocenós</div>
-            <div class="link login" @click="setSection('login')">Iniciar Sesión</div>
-            <div class="link register" @click="setSection('register')">Resgistar</div>
+                    <template x-if="section === 'login'">
+                        <div class="section login">
+                            <form method="POST" action="{{ route('login') }}">
+                                @csrf
 
-        </header>
-        <template x-if="section === 'conocenos'">
-            <div class="section conocenos">
-                <h1>Conocenos</h1>
-                <p>Bienvenido a Tool City, la mejor tienda de herramientas en línea.</p>
+                                <!-- Email Address -->
+                                <div class="mb-4">
+                                    <label for="email" class="form-label fw-bold">Email</label>
+                                    <input type="email" id="email" name="email" class="form-control" value="{{ old('email') }}" required autofocus>
+                                    @error('email')
+                                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <!-- Password -->
+                                <div class="mb-4">
+                                    <label for="password" class="form-label fw-bold">Contraseña</label>
+                                    <input type="password" id="password" name="password" class="form-control" required>
+                                    @error('password')
+                                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <!-- Remember Me -->
+                                <div class="form-check mb-4">
+                                    <input type="checkbox" id="remember_me" name="remember" class="form-check-input">
+                                    <label for="remember_me" class="form-check-label">Recuérdame</label>
+                                </div>
+
+                                <div class="d-flex justify-content-between">
+                                    @if (Route::has('password.request'))
+                                        <a href="{{ route('password.request') }}" class="btn btn-link">¿Olvidaste tu contraseña?</a>
+                                    @endif
+                                    <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+                                </div>
+                            </form>
+                        </div>
+                    </template>
+
+                    <template x-if="section === 'register'">
+                        <div class="section register">
+                            <form method="POST" action="{{ route('register') }}">
+                                @csrf
+
+                                <!-- Name -->
+                                <div class="mb-4">
+                                    <label for="name" class="form-label fw-bold">Nombre</label>
+                                    <input type="text" id="name" name="name" class="form-control" value="{{ old('name') }}" required>
+                                    @error('name')
+                                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <!-- Email Address -->
+                                <div class="mb-4">
+                                    <label for="email" class="form-label fw-bold">Email</label>
+                                    <input type="email" id="email" name="email" class="form-control" value="{{ old('email') }}" required>
+                                    @error('email')
+                                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <!-- Password -->
+                                <div class="mb-4">
+                                    <label for="password" class="form-label fw-bold">Contraseña</label>
+                                    <input type="password" id="password" name="password" class="form-control" required>
+                                    @error('password')
+                                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <!-- Confirm Password -->
+                                <div class="mb-4">
+                                    <label for="password_confirmation" class="form-label fw-bold">Confirmar Contraseña</label>
+                                    <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" required>
+                                    @error('password_confirmation')
+                                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="d-flex justify-content-between">
+                                    <a href="{{ route('login') }}" class="btn btn-link">¿Ya estás registrado?</a>
+                                    <button type="submit" class="btn btn-primary">Registrar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </template>
+                </div>
             </div>
-        </template>
-        <template x-if="section === 'login'">
-            <div class="section login">
-
-                <form method="POST" action="{{ route('login') }}">
-                    @csrf
-
-                    <!-- Email Address -->
-                    <div>
-                        <x-input-label for="email" :value="__('Email')" />
-                        <x-text-input id="email" class="block mt-1 w-full" type="email" name="email"
-                            :value="old('email')" required autofocus autocomplete="username" />
-                        <x-input-error :messages="$errors->get('email')" class="mt-2" />
-                    </div>
-
-                    <!-- Password -->
-                    <div class="mt-4">
-                        <x-input-label for="password" :value="__('Password')" />
-
-                        <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required
-                            autocomplete="current-password" />
-
-                        <x-input-error :messages="$errors->get('password')" class="mt-2" />
-                    </div>
-
-                    <!-- Remember Me -->
-                    <div class="block mt-4">
-                        <label for="remember_me" class="inline-flex items-center">
-                            <input id="remember_me" type="checkbox"
-                                class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800"
-                                name="remember">
-                            <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
-                        </label>
-                    </div>
-
-                    <div class="flex items-center justify-end mt-4">
-                        @if (Route::has('password.request'))
-                            <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
-                                href="{{ route('password.request') }}">
-                                {{ __('Forgot your password?') }}
-                            </a>
-                        @endif
-
-                        <x-primary-button class="ms-3">
-                            {{ __('Log in') }}
-                        </x-primary-button>
-                    </div>
-                </form>
-
-
-            </div>
-        </template>
-        <template x-if="section === 'register'">
-            <div class="section register">
-                <form method="POST" action="{{ route('register') }}">
-                    @csrf
-            
-                    <!-- Name -->
-                    <div>
-                        <x-input-label for="name" :value="__('Name')" />
-                        <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-                        <x-input-error :messages="$errors->get('name')" class="mt-2" />
-                    </div>
-            
-                    <!-- Email Address -->
-                    <div class="mt-4">
-                        <x-input-label for="email" :value="__('Email')" />
-                        <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-                        <x-input-error :messages="$errors->get('email')" class="mt-2" />
-                    </div>
-            
-                    <!-- Password -->
-                    <div class="mt-4">
-                        <x-input-label for="password" :value="__('Password')" />
-            
-                        <x-text-input id="password" class="block mt-1 w-full"
-                                        type="password"
-                                        name="password"
-                                        required autocomplete="new-password" />
-            
-                        <x-input-error :messages="$errors->get('password')" class="mt-2" />
-                    </div>
-            
-                    <!-- Confirm Password -->
-                    <div class="mt-4">
-                        <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-            
-                        <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                                        type="password"
-                                        name="password_confirmation" required autocomplete="new-password" />
-            
-                        <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-                    </div>
-            
-                    <div class="flex items-center justify-end mt-4">
-                        <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('login') }}">
-                            {{ __('Already registered?') }}
-                        </a>
-            
-                        <x-primary-button class="ms-4">
-                            {{ __('Register') }}
-                        </x-primary-button>
-                    </div>
-                </form>
-            </div>
-        </template>
-
-        Bienvenido
-
-    @endsection
+        </div>
+    </div>
+</div>
+@endsection
