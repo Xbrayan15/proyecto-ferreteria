@@ -1,38 +1,52 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h1>Editar Subcategoría</h1>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white text-center">
+                    <h1 class="h4 mb-0">Editar Subcategoría</h1>
+                </div>
+                <div class="card-body p-4">
+                    <form action="{{ route('subcategories.update', $subcategory) }}" method="POST">
+                        @csrf
+                        @method('PUT')
 
-    <form action="{{ route('subcategories.update', $subcategory) }}" method="POST">
-        @csrf
-        @method('PUT')
+                        <!-- Nombre -->
+                        <div class="mb-4">
+                            <label for="nombre" class="form-label fw-bold">Nombre</label>
+                            <input type="text" class="form-control" name="nombre" id="nombre" value="{{ old('nombre', $subcategory->nombre) }}" required>
+                            @error('nombre')
+                                <div class="text-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-        <div class="mb-3">
-            <label for="nombre" class="form-label">Nombre</label>
-            <input type="text" class="form-control" name="nombre" id="nombre" value="{{ old('nombre', $subcategory->nombre) }}" required>
-            @error('nombre')
-                <div class="text-danger">{{ $message }}</div>
-            @enderror
+                        <!-- Categoría -->
+                        <div class="mb-4">
+                            <label for="category_id" class="form-label fw-bold">Categoría</label>
+                            <select name="category_id" id="category_id" class="form-select" required>
+                                <option value="">Seleccionar categoría</option>
+                                @foreach ($categories as $category)
+                                    <option value="{{ $category->id }}" {{ old('category_id', $subcategory->category_id) == $category->id ? 'selected' : '' }}>
+                                        {{ $category->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('category_id')
+                                <div class="text-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-success px-4">Actualizar</button>
+                            <a href="{{ route('subcategories.index') }}" class="btn btn-secondary px-4">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-
-        <div class="mb-3">
-            <label for="category_id" class="form-label">Categoría</label>
-            <select name="category_id" class="form-control" required>
-                <option value="">Seleccionar categoría</option>
-                @foreach ($categories as $category)
-                    <option value="{{ $category->id }}" {{ old('category_id', $subcategory->category_id) == $category->id ? 'selected' : '' }}>
-                        {{ $category->nombre }}
-                    </option>
-                @endforeach
-            </select>
-            @error('category_id')
-                <div class="text-danger">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <button type="submit" class="btn btn-primary">Actualizar</button>
-        <a href="{{ route('subcategories.index') }}" class="btn btn-secondary">Cancelar</a>
-    </form>
+    </div>
 </div>
 @endsection

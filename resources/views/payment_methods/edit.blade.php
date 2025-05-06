@@ -1,8 +1,17 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h1>Editar Método de Pago</h1>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white text-center">
+                    <h1 class="h4 mb-0">Editar Método de Pago</h1>
+                </div>
+                <div class="card-body p-4">
+                    <form action="{{ route('payment_methods.update', $paymentMethod) }}" method="POST">
+                        @csrf
+                        @method('PUT')
 
     <form action="{{ route('payment_methods.update', $paymentMethod->id) }}" method="POST">
         @csrf

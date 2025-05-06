@@ -1,25 +1,43 @@
-<x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-        {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
+@extends('layouts.app')
+
+@section('title', 'Recuperar Contraseña | Tool City')
+
+@section('content')
+<div class="d-flex justify-content-center align-items-center vh-100 bg-light">
+    <div class="card shadow-lg w-100" style="max-width: 400px; border: none;">
+        <div class="card-header bg-primary text-white text-center">
+            <h3 class="mb-0">Recuperar Contraseña</h3>
+        </div>
+        <div class="card-body">
+            <p class="text-muted mb-4">
+                ¿Olvidaste tu contraseña? No hay problema. Ingresa tu dirección de correo electrónico y te enviaremos un enlace para restablecerla.
+            </p>
+
+            <!-- Session Status -->
+            @if (session('status'))
+                <div class="alert alert-success mb-4">
+                    {{ session('status') }}
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('password.email') }}">
+                @csrf
+
+                <!-- Email Address -->
+                <div class="mb-4">
+                    <label for="email" class="form-label fw-bold">Correo Electrónico</label>
+                    <input type="email" id="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required autofocus>
+                    @error('email')
+                        <div class="alert alert-danger mt-2">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">Enviar Enlace de Restablecimiento</button>
+                </div>
+            </form>
+        </div>
     </div>
-
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
-
-    <form method="POST" action="{{ route('password.email') }}">
-        @csrf
-
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Email Password Reset Link') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+</div>
+@endsection

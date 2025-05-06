@@ -1,25 +1,46 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1>Crear Historial de Estado</h1>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white text-center">
+                    <h1 class="h4 mb-0">Crear Historial de Estado</h1>
+                </div>
+                <div class="card-body p-4">
+                    <form action="{{ route('invoice-status-history.store') }}" method="POST">
+                        @csrf
 
-    <form action="{{ route('invoice-status-history.store') }}" method="POST">
-        @csrf
+                        <!-- Factura -->
+                        <div class="mb-4">
+                            <label for="invoice_id" class="form-label fw-bold">Factura</label>
+                            <select name="invoice_id" id="invoice_id" class="form-select" required>
+                                @foreach($invoices as $invoice)
+                                    <option value="{{ $invoice->id }}">{{ $invoice->id }}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
-        <label>Factura:</label>
-        <select name="invoice_id">
-            @foreach($invoices as $invoice)
-                <option value="{{ $invoice->id }}">{{ $invoice->id }}</option>
-            @endforeach
-        </select>
+                        <!-- Estado -->
+                        <div class="mb-4">
+                            <label for="status" class="form-label fw-bold">Estado</label>
+                            <select name="status" id="status" class="form-select" required>
+                                <option value="pending">Pendiente</option>
+                                <option value="paid">Pagada</option>
+                                <option value="cancelled">Cancelada</option>
+                            </select>
+                        </div>
 
-        <label>Estado:</label>
-        <select name="status">
-            <option value="pending">Pendiente</option>
-            <option value="paid">Pagada</option>
-            <option value="cancelled">Cancelada</option>
-        </select>
-
-        <button type="submit">Guardar</button>
-    </form>
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-success px-4">Guardar</button>
+                            <a href="{{ route('invoice-status-history.index') }}" class="btn btn-secondary px-4">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection

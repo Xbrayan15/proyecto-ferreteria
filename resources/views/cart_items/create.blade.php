@@ -15,8 +15,18 @@
         </div>
     @endif
 
-    <form action="{{ route('cart-items.store') }}" method="POST">
-        @csrf
+                        <!-- Carrito -->
+                        <div class="mb-4">
+                            <label for="shopping_cart_id" class="form-label fw-bold">Carrito</label>
+                            <select name="shopping_cart_id" id="shopping_cart_id" class="form-select" required>
+                                @foreach($carts as $cart)
+                                    <option value="{{ $cart->id }}">Usuario: {{ $cart->user->name ?? 'N/A' }} (ID: {{ $cart->id }})</option>
+                                @endforeach
+                            </select>
+                            @error('shopping_cart_id')
+                                <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
 
         <div class="mb-3">
             <label for="shopping_cart_id" class="form-label">Carrito</label>
