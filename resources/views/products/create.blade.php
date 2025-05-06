@@ -9,7 +9,7 @@
                     <h1 class="h4 mb-0">Crear Nuevo Producto</h1>
                 </div>
                 <div class="card-body p-4">
-                    <form action="{{ route('products.store') }}" method="POST">
+                    <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <div class="mb-4">
@@ -46,6 +46,14 @@
                                     <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->nombre }}</option>
                                 @endforeach
                             </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="imagen" class="form-label fw-bold">Imagen del Producto</label>
+                            <input type="file" name="imagen" id="imagen" class="form-control @error('imagen') is-invalid @enderror">
+                            @error('imagen')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="d-flex justify-content-between">

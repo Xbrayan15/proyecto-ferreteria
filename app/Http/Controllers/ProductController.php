@@ -36,12 +36,19 @@ class ProductController extends Controller
             'descripcion' => 'nullable|string',
             'sku' => 'required|string|max:100|unique:products,sku',
             'precio' => 'required|numeric',
-            'stock' => 'required|integer',  // Aquí ahora se maneja directamente el stock
+            'stock' => 'required|integer',
             'category_id' => 'nullable|exists:categories,id',
             'subcategory_id' => 'nullable|exists:subcategories,id',
             'brand_id' => 'nullable|exists:brands,id',
             'tax_id' => 'nullable|exists:taxes,id',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif', // Validación para la imagen
         ]);
+
+        // Manejar la imagen
+        if ($request->hasFile('imagen')) {
+            $imagePath = $request->file('imagen')->store('products', 'public');
+            $validated['imagen'] = '/storage/' . $imagePath;
+        }
 
         // Crear el producto
         $product = Product::create($validated);
@@ -55,7 +62,6 @@ class ProductController extends Controller
             ]);
         }
 
-        // Registrar el precio en el historial
         ProductPriceHistory::create([
             'product_id' => $product->id,
             'precio_anterior' => $validated['precio'],
@@ -67,19 +73,18 @@ class ProductController extends Controller
     }
 
     public function show(Product $product)
-{
-    // Cargar relaciones necesarias
-    $product->load([
-        'category',
-        'subcategory',
-        'brand',
-        'tax',
-        'productReviews.user' // Carga también las reseñas con los usuarios
-    ]);
+    {
+        // Cargar relaciones necesarias
+        $product->load([
+            'category',
+            'subcategory',
+            'brand',
+            'tax',
+            'productReviews.user' // Carga también las reseñas con los usuarios
+        ]);
 
-    return view('products.show', compact('product'));
-}
-
+        return view('products.show', compact('product'));
+    }
 
     public function edit(Product $product)
     {
@@ -98,14 +103,20 @@ class ProductController extends Controller
             'descripcion' => 'nullable|string',
             'sku' => 'required|string|max:100|unique:products,sku,' . $product->id,
             'precio' => 'required|numeric',
-            'stock' => 'required|integer',  // Actualiza la cantidad de stock
+            'stock' => 'required|integer',
             'category_id' => 'nullable|exists:categories,id',
             'subcategory_id' => 'nullable|exists:subcategories,id',
             'brand_id' => 'nullable|exists:brands,id',
             'tax_id' => 'nullable|exists:taxes,id',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif', // Validación para la imagen
         ]);
 
-        // Si el precio cambió, registramos el cambio en el historial
+        // Manejar la imagen
+        if ($request->hasFile('imagen')) {
+            $imagePath = $request->file('imagen')->store('products', 'public');
+            $validated['imagen'] = '/storage/' . $imagePath;
+        }
+
         if ($product->precio != $validated['precio']) {
             ProductPriceHistory::create([
                 'product_id' => $product->id,
@@ -126,5 +137,4 @@ class ProductController extends Controller
 
         return redirect()->route('products.index')->with('success', 'Producto eliminado correctamente.');
     }
-    
 }

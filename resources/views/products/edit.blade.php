@@ -9,7 +9,7 @@
                     <h1 class="h4 mb-0">Editar Producto</h1>
                 </div>
                 <div class="card-body p-4">
-                    <form action="{{ route('products.update', $product) }}" method="POST">
+                    <form action="{{ route('products.update', $product) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 
@@ -119,6 +119,15 @@
                             </select>
                             @error('tax_id')
                                 <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Imagen del Producto -->
+                        <div class="mb-4">
+                            <label for="imagen" class="form-label fw-bold">Imagen del Producto</label>
+                            <input type="file" name="imagen" id="imagen" class="form-control @error('image') is-invalid @enderror">
+                            @error('image')
+                                <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 

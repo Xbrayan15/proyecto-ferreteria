@@ -17,6 +17,7 @@ return new class extends Migration
         $table->text('descripcion')->nullable();
         $table->string('sku')->unique();
         $table->decimal('precio', 10, 2);
+        $table->string('imagen')->nullable();
         $table->integer('stock'); // Aquí simplemente agregamos el campo stock como un integer
         // Eliminamos el campo stock_id y la relación con stocks
         $table->unsignedBigInteger('category_id')->nullable();
@@ -24,6 +25,7 @@ return new class extends Migration
         $table->unsignedBigInteger('brand_id')->nullable();
         $table->unsignedBigInteger('tax_id')->nullable();
         $table->timestamps();
+
 
         // Definimos las claves foráneas para las otras relaciones (category, subcategory, brand, tax)
         $table->foreign('category_id')->references('id')->on('categories')->onDelete('set null');

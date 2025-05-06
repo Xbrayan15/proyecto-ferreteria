@@ -12,7 +12,7 @@ class Product extends Model
     // Definir los campos que se pueden asignar masivamente
     protected $fillable = [
         'nombre', 'descripcion', 'sku', 'precio', 'stock',
-        'category_id', 'subcategory_id', 'brand_id', 'tax_id'
+        'category_id', 'subcategory_id', 'brand_id', 'tax_id', 'imagen'
     ];
 
     // Relacionar con otras tablas (Modelos)

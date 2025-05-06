@@ -9,11 +9,10 @@ class BrandController extends Controller
 {
     // Mostrar todas las marcas
     public function index()
-    {
-        $brands = Brand::all();  // Obtener todas las marcas de la base de datos
-        return view('brands.index', compact('brands'));  // Devolver la vista con las marcas
-    }
-
+{
+    $brands = Brand::paginate(10); // Muestra 10 marcas por página
+    return view('brands.index', compact('brands'));
+}
     // Mostrar formulario para crear una nueva marca
     public function create()
     {

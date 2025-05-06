@@ -3,9 +3,14 @@
     <div class="container">
         <!-- Logo -->
         <a class="navbar-brand" href="{{ route('home') }}">
-            <img src="/path/to/logo.png" alt="Logo" class="h-9">
+            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-12">
         </a>
 
+        <!-- Success Message (Non-Mobile Version) -->
+        @if(session('success'))
+          
+        @endif
+        
         <!-- Hamburger (Mobile) -->
         <button @click="mobileOpen = !mobileOpen" class="navbar-toggler" type="button" aria-controls="navbarSupportedContent" :aria-expanded="mobileOpen" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -22,7 +27,12 @@
                 </li>
             </ul>
 
-            <!-- Right Side Links (Mobile Version) -->
+            @if(session('success'))
+                <div class="alert alert-success d-lg-none me-3">
+                    👈(ﾟヮﾟ👈)
+                </div>
+            @endif
+
             <ul class="navbar-nav ms-auto d-lg-none">
                 <li class="nav-item position-relative" @click.away="dropdownMobile = false">
                     <a href="#" class="nav-link" @click.prevent="dropdownMobile = !dropdownMobile">
@@ -44,7 +54,6 @@
             </ul>
         </div>
 
-        <!-- Right Side Links (Desktop) -->
         <div class="d-none d-lg-flex align-items-center position-relative ms-auto" @click.away="dropdownDesktop = false">
             <span class="me-3" @click.prevent="dropdownDesktop = !dropdownDesktop">{{ Auth::user()->name }}</span>
             <div>
@@ -66,6 +75,7 @@
             </div>
         </div>
     </div>
+    
 </nav>
 @endauth
 

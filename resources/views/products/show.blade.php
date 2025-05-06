@@ -9,6 +9,16 @@
                     <h1 class="h4 mb-0">Detalle del Producto</h1>
                 </div>
                 <div class="card-body p-4">
+                    <!-- Imagen del producto -->
+                    <div class="text-center mb-4">
+                        @if($product->imagen)
+                            <img src="{{ $product->imagen }}" class="img-fluid rounded" alt="{{ $product->nombre }}" style="max-height: 300px;">
+                        @else
+                            <img src="{{ asset('images/default-product.png') }}" class="img-fluid rounded" alt="Producto sin imagen" style="max-height: 300px;">
+                        @endif
+                    </div>
+
+                    <!-- Detalles del producto -->
                     <h3 class="card-title text-center">{{ $product->nombre }}</h3>
                     <p><strong>Descripción:</strong> {{ $product->descripcion }}</p>
                     <p><strong>SKU:</strong> {{ $product->sku }}</p>
@@ -26,7 +36,7 @@
                 </div>
             </div>
 
-            {{-- Formulario para agregar el producto al carrito --}}
+            <!-- Formulario para agregar al carrito -->
             @auth
             <div class="card shadow-lg border-0 mt-4">
                 <div class="card-header bg-light text-center">
@@ -61,13 +71,13 @@
                 <p class="mt-3 text-center"> <a href="{{ route('login') }}">Inicia sesión</a> para agregar productos al carrito.</p>
             @endauth
 
-            {{-- SECCIÓN DE RESEÑAS --}}
+            <!-- Sección de reseñas -->
             <div class="card shadow-lg border-0 mt-4">
                 <div class="card-header bg-light text-center">
                     <h4 class="h5 mb-0">Reseñas</h4>
                 </div>
                 <div class="card-body">
-                    {{-- Mostrar reseñas existentes --}}
+                    <!-- Mostrar reseñas existentes -->
                     @if($product->productReviews->isEmpty())
                         <p class="text-center">No hay reseñas aún.</p>
                     @else
@@ -89,7 +99,7 @@
                         </div>
                     @endif
 
-                    {{-- Formulario para agregar reseña --}}
+                    <!-- Formulario para agregar reseña -->
                     @auth
                         <h5 class="mb-3">Agregar una reseña</h5>
 
@@ -114,11 +124,7 @@
                             <div class="mb-3">
                                 <label for="review" class="form-label">Comentario</label>
                                 <textarea name="review" id="review" class="form-control" rows="3"></textarea>
-                                @error('review') 
-                                @if(isset($message)) 
-                                    <div class="text-danger">{{ $message }}</div> 
-                                @endif 
-                                @enderror
+                                @error('review') <div class="text-danger">{{ $message }}</div> @enderror
                             </div>
 
                             <button type="submit" class="btn btn-primary w-100">Enviar reseña</button>

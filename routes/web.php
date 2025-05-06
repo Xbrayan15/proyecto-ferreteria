@@ -29,16 +29,13 @@ use App\Http\Controllers\InvoiceStatusHistoryController;
 
 
 Route::middleware('auth')->group(function () {
+    // Rutas CRUD para cart-items, excluyendo 'show'
     Route::resource('cart-items', CartItemController::class)->except(['show']);
-});
-
-Route::middleware('auth')->group(function () {
-    // Otras rutas...
-
-    // Mostrar formulario de checkout
+    
+    // Ruta para mostrar el formulario de checkout
     Route::get('/cart-items/checkout', [CartItemController::class, 'showCheckoutForm'])->name('cart-items.checkout.form');
 
-    // Procesar checkout
+    // Ruta para procesar el checkout
     Route::post('/cart-items/checkout', [CartItemController::class, 'checkout'])->name('cart-items.checkout');
 });
 

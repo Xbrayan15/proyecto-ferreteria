@@ -100,10 +100,14 @@ class User extends Authenticatable
          return $this->hasMany(ProductReview::class);
      }
   // En el modelo User
+// En el modelo User
+
+
 public function paymentMethods()
 {
     return $this->hasMany(PaymentMethod::class);
 }
+
 
      
 }

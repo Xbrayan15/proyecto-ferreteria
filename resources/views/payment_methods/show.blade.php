@@ -3,21 +3,30 @@
 @section('content')
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-lg-6 col-md-8">
+        <div class="col-lg-8">
             <div class="card shadow-lg border-0">
                 <div class="card-header bg-primary text-white text-center">
-                    <h1 class="h4 mb-0">Detalles del Método de Pago</h1>
+                    <h1 class="h4 mb-0">Detalle del Método de Pago</h1>
                 </div>
                 <div class="card-body">
-                    <ul class="list-group mb-4">
-                        <li class="list-group-item"><strong>ID:</strong> {{ $paymentMethod->id }}</li>
-                        <li class="list-group-item"><strong>Nombre:</strong> {{ $paymentMethod->name }}</li>
-                        <li class="list-group-item"><strong>Creado en:</strong> {{ $paymentMethod->created_at->format('d/m/Y H:i') }}</li>
-                        <li class="list-group-item"><strong>Actualizado en:</strong> {{ $paymentMethod->updated_at->format('d/m/Y H:i') }}</li>
-                    </ul>
+                    <!-- Detalles del Método de Pago -->
+                    <div class="mb-3">
+                        <strong>ID:</strong> {{ $paymentMethod->id }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Nombre:</strong> {{ $paymentMethod->name }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Creado:</strong> {{ $paymentMethod->created_at->format('d/m/Y H:i') }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Actualizado:</strong> {{ $paymentMethod->updated_at->format('d/m/Y H:i') }}
+                    </div>
 
-                    <div class="d-flex justify-content-end">
-                        <a href="{{ route('payment_methods.index') }}" class="btn btn-secondary px-4">Volver al listado</a>
+                    <!-- Botones de Acción -->
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ route('payment_methods.edit', $paymentMethod) }}" class="btn btn-warning">Editar</a>
+                        <a href="{{ route('payment_methods.index') }}" class="btn btn-secondary">Volver</a>
                     </div>
                 </div>
             </div>

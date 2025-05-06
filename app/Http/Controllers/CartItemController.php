@@ -1,5 +1,6 @@
 <?php
 
+
 namespace App\Http\Controllers;
 
 use App\Models\CartItem;
@@ -7,11 +8,11 @@ use App\Models\Product;
 use App\Models\ShoppingCart;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\PaymentMethod;
+use App\Models\Address;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Models\User;
-
-
+use Illuminate\Validation\Rule;
 
 class CartItemController extends Controller
 {
@@ -72,27 +73,57 @@ class CartItemController extends Controller
         return redirect()->route('cart-items.index')->with('success', 'Ítem eliminado.');
     }
 
-    // Mostrar formulario de checkout (GET)
-    public function showCheckoutForm()
-    {
-        $user = auth()->user(); //
-
-
-
-        
-        $cart = $user->shoppingCart()->with('cartItems.product')->first();
-
-        if (!$cart || $cart->cartItems->isEmpty()) {
-            return redirect()->route('cart-items.index')->with('error', 'Tu carrito está vacío.');
-        }
-
-        $addresses = $user->addresses()->get();
-        $paymentMethods = $user->paymentMethods()->get();
-
-        return view('checkout.form', compact('cart', 'addresses', 'paymentMethods'));
+    // Mostrar formulario de checkout
+    public function showCheckoutForm(Request $request)
+{
+    // Validate user is authenticated
+    if (!$request->user()) {
+        return redirect()->route('login')->with('error', 'Debes iniciar sesión para continuar.');
     }
 
-    // Procesar checkout (POST)
+    $user = $request->user();
+
+    // Fetch user's shopping cart with related items and products
+    $cart = $user->shoppingCart()->with('cartItems.product')->first();
+
+    // Check if cart exists and has items
+    if (!$cart || $cart->cartItems->isEmpty()) {
+        return redirect()->route('cart-items.index')
+            ->with('error', 'Tu carrito está vacío.');
+    }
+
+    // Fetch user-specific addresses
+    $addresses = Address::where('user_id', $user->id)->get();
+
+    // Fetch all payment methods
+    $paymentMethods = PaymentMethod::all();
+
+    // Additional validation for addresses and payment methods
+    if ($addresses->isEmpty()) {
+        return redirect()->route('addresses.create')
+            ->with('error', 'Debes agregar una dirección de envío primero.');
+    }
+
+    if ($paymentMethods->isEmpty()) {
+        return redirect()->route('payment-methods.create')
+            ->with('error', 'No hay métodos de pago disponibles.');
+    }
+
+    // Calculate cart total
+    $cartTotal = $cart->cartItems->sum(function ($item) {
+        return $item->quantity * $item->product->price;
+    });
+
+    // Render checkout view with all necessary data
+    return view('checkout.checkout', [
+        'cart' => $cart,
+        'addresses' => $addresses,
+        'paymentMethods' => $paymentMethods,
+        'cartTotal' => $cartTotal
+    ]);
+}
+
+
     public function checkout(Request $request)
     {
         $user = $request->user();
@@ -104,7 +135,10 @@ class CartItemController extends Controller
         }
 
         $request->validate([
-            'address_id' => 'required|exists:addresses,id',
+            'address_id' => [
+                'required',
+                Rule::exists('addresses', 'id')->where(fn ($query) => $query->where('user_id', $user->id)),
+            ],
             'payment_method_id' => 'required|exists:payment_methods,id',
         ], [
             'address_id.exists' => 'La dirección seleccionada no es válida.',
@@ -119,7 +153,7 @@ class CartItemController extends Controller
             foreach ($cartItems as $item) {
                 if ($item->product->stock < $item->quantity) {
                     return redirect()->route('cart-items.index')
-                                     ->with('error', "No hay suficiente stock para '{$item->product->name}'.");
+                        ->with('error', "No hay suficiente stock para '{$item->product->name}'.");
                 }
 
                 $totalAmount += $item->product->price * $item->quantity;
@@ -148,11 +182,13 @@ class CartItemController extends Controller
 
             DB::commit();
 
-            return redirect()->route('orders.show', $order)->with('success',
-                'Pedido realizado con éxito. Número de orden: ' . $order->id . ' y total: $' . number_format($totalAmount, 2));
+            return redirect()->route('orders.show', $order)
+                ->with('success', 'Pedido realizado con éxito. Número de orden: ' . $order->id);
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->route('cart-items.index')->with('error', 'Hubo un problema al procesar tu pedido. Intenta nuevamente.');
+
+            return redirect()->route('cart-items.index')
+                ->with('error', 'Hubo un problema al procesar tu pedido. Intenta nuevamente.');
         }
     }
 }

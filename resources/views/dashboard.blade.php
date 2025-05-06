@@ -19,7 +19,7 @@
     <div class="row mt-5">
         <div class="col-md-4 mb-4">
             <div class="card shadow-sm border-0">
-                <div class="card-body text-center">
+                <div class="card-body text-center shadow-hover">
                     <h5 class="card-title">Direcciones</h5>
                     <p class="card-text">Gestiona las direcciones de los usuarios.</p>
                     <a href="{{ route('addresses.index') }}" class="btn btn-primary">Ver Direcciones</a>

@@ -3,12 +3,12 @@
 @section('content')
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-lg-6 col-md-8">
+        <div class="col-lg-8">
             <div class="card shadow-lg border-0">
                 <div class="card-header bg-primary text-white text-center">
                     <h1 class="h4 mb-0">Editar Método de Pago</h1>
                 </div>
-                <div class="card-body p-4">
+                <div class="card-body">
                     <form action="{{ route('payment_methods.update', $paymentMethod) }}" method="POST">
                         @csrf
                         @method('PUT')
@@ -22,10 +22,10 @@
                             @enderror
                         </div>
 
-                        <!-- Botones -->
+                        <!-- Botones de Acción -->
                         <div class="d-flex justify-content-between">
-                            <button type="submit" class="btn btn-success px-4">Actualizar</button>
-                            <a href="{{ route('payment_methods.index') }}" class="btn btn-secondary px-4">Cancelar</a>
+                            <button type="submit" class="btn btn-success">Actualizar</button>
+                            <a href="{{ route('payment_methods.index') }}" class="btn btn-secondary">Cancelar</a>
                         </div>
                     </form>
                 </div>
